@@ -1,7 +1,7 @@
 ---
 image: "YOUR_HAZELCAST_IMAGE:TAG"
 clusteringServiceImage: "YOUR_CLUSTERING_SERVICE_IMAGE:TAG"
-imagePullPolicy: "Always"
+imagePullPolicy: "Never"
 # Enter the number of initial members in Hazelcast cluster.
 replicas: 3
 # Setting below to true will deploy the Pega Platform in client-server Hazelcast model for version 8.6 through 8.7.x.

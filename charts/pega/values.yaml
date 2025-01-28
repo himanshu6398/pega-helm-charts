@@ -4,7 +4,7 @@ global:
   # each configuration option, see the project readme.
 
   # Enter your Kubernetes provider.
-  provider: "YOUR_KUBERNETES_PROVIDER"
+  provider: "k8s"
 
   # Enter a name for the deployment if using multi-tenant services such as the Search and Reporting Service.
   customerDeploymentId:
@@ -44,20 +44,20 @@ global:
     #                       progressiveStreaming=2;useJDBC4ColumnNameAndLabelSemantics=2;
     #   SQL Server          jdbc:sqlserver://localhost:1433;databaseName=dbName;selectMethod=cursor;sendStringParametersAsUnicode=false
     #   PostgreSQL          jdbc:postgresql://localhost:5432/dbName
-    url: "YOUR_JDBC_URL"
+    url: "jdbc:postgresql://host.minikube.internal:32510/postgres"
     #   driverClass 	-- jdbc class.  Valid values are:
     #
     #   Oracle              oracle.jdbc.OracleDriver
     #   IBM DB/2            com.ibm.db2.jcc.DB2Driver
     #   SQL Server          com.microsoft.sqlserver.jdbc.SQLServerDriver
     #   PostgreSQL          org.postgresql.Driver
-    driverClass: "YOUR_JDBC_DRIVER_CLASS"
+    driverClass: "org.postgresql.Driver"
     #   pega.database.type	Valid values are: mssql, oracledate, udb, db2zos, postgres
-    dbType: "YOUR_DATABASE_TYPE"
+    dbType: "postgres"
     #   For databases that use multiple JDBC driver files (such as DB2), specify comma separated values for 'driverUri'
-    driverUri: "YOUR_JDBC_DRIVER_URI"
-    username: "YOUR_JDBC_USERNAME"
-    password: "YOUR_JDBC_PASSWORD"
+    driverUri: "https://jdbc.postgresql.org/download/postgresql-42.2.9.jar"
+    username: "postgres"
+    password: "postgres"
     # To avoid exposing username & password, leave the jdbc.password & jdbc.username parameters empty (no quotes),
     # configure JDBC username & password parameters in the External Secrets Manager, and enter the external secret for the credentials
     # make sure the keys in the secret should be DB_USERNAME and DB_PASSWORD respectively
@@ -69,8 +69,8 @@ global:
     # To pass an Authentication method and a managed identity, MSI Client ID,
     # set: connectionProperties: "Authentication=ActiveDirectoryMSI;msiClientId=<your Azure Managed Identity>;"
     connectionProperties: ""
-    rulesSchema: "YOUR_RULES_SCHEMA"
-    dataSchema: "YOUR_DATA_SCHEMA"
+    rulesSchema: "rules"
+    dataSchema: "data"
     customerDataSchema: ""
 
   customArtifactory:
@@ -91,7 +91,7 @@ global:
       external_secret_name: ""
     # Leave customArtifactory.enableSSLVerification enabled to ensure secure access to your custom artifactory;
     # when customArtifactory.enableSSLVerification is false, SSL verification is skipped and establishes an insecure connection.
-    enableSSLVerification: true
+    enableSSLVerification: false
     # Provide a required domain certificate for your custom artifactory; if none is required, leave this field blank.
     certificate:
 
@@ -106,7 +106,7 @@ global:
     imagePullSecretNames: []
     # Docker image information for the Pega docker image, containing the application server.
     pega:
-      image: "pegasystems/pega"
+      image: "docker-dev.bin.pega.io/sde/sde-packedengine:8.25.0-SNAPSHOT"
 
   utilityImages:
     busybox:
@@ -216,7 +216,7 @@ global:
 
         # Enter the domain name to access web nodes via a load balancer.
         #  e.g. web.mypega.example.com
-        domain: "YOUR_WEB_NODE_DOMAIN"
+        domain: "web.mypega.example.com"
         # Configure custom path for given host along with pathType. Default pathType is ImplementationSpecific.
         # path:
         # pathType:
@@ -234,7 +234,7 @@ global:
           key:
           cacertificate:
 
-      replicas: 1
+      replicas: 1    #increase it bring up more pega-web pods
       javaOpts: ""
 
       deploymentStrategy:
@@ -251,11 +251,11 @@ global:
       # maxHeap: "8192m"
       resources:
         requests:
-          memory: "12Gi"
-          cpu: 3
+          memory: "6Gi"
+          cpu: 2
         limits:
-          memory: "12Gi"
-          cpu: 4
+          memory: "6Gi"
+          cpu: 2
 
       # To configure an alternative user for custom image, set value for runAsUser.
       # To configure an alternative group for volume mounts, set value for fsGroup
@@ -316,7 +316,7 @@ global:
       # the load balancer.
       nodeType: "BackgroundProcessing,Search,Batch,RealTime,Custom1,Custom2,Custom3,Custom4,Custom5,BIX"
 
-      replicas: 1
+      replicas: 0
       javaOpts: ""
 
       # To configure net.ipv4.tcp_keepalive_time OS Kernel setting, set the value in seconds.
@@ -373,9 +373,9 @@ global:
 
 # Cassandra automatic deployment settings.
 cassandra:
-  enabled: true
+  enabled: false
   persistence:
-    enabled: true
+    enabled: false
   resources:
     requests:
       memory: "4Gi"
@@ -478,7 +478,7 @@ dds:
 pegasearch:
   image: "pegasystems/search"
   memLimit: "3Gi"
-  replicas: 1
+  replicas: 0
 
   # Set externalSearchService to true to use the Search and Reporting Service.
   # Refer to the README document to configure SRS as a search functionality provider under this section.
@@ -518,14 +518,14 @@ hazelcast:
   # Hazelcast docker image for platform version 8.6 through 8.7.x
   image: "YOUR_HAZELCAST_IMAGE:TAG"
   # Hazelcast docker image for platform version 8.8 and later
-  clusteringServiceImage: "YOUR_CLUSTERING_SERVICE_IMAGE:TAG"
+  clusteringServiceImage: "docker-dev.bin.pega.io/platform/clustering-service:1.4.0-20241008121154"
 
   # Setting below to true will deploy Pega Platform using a client-server Hazelcast model for version 8.6 through 8.7.x.
   # Note: Make sure to set this value as "false" in case of Pega Platform version before "8.6". If not set this will fail the installation.
-  enabled: true
+  enabled: false
 
   # Setting below to true will deploy Pega Platform using a client-server Hazelcast model for version 8.8 and later.
-  clusteringServiceEnabled: false
+  clusteringServiceEnabled: true
   # Set to true to enforce SSL communication between the Clustering Service and Pega Platform.
   encryption:
     enabled: false
@@ -541,9 +541,9 @@ hazelcast:
   # No. of initial members to join
   replicas: 3
   # UserName in the client-server Hazelcast model authentication. This setting is exposed and not secure.
-  username: ""
+  username: "test"
   # Password in the client-server Hazelcast model authentication. This setting is exposed and not secure.
-  password: ""
+  password: "test"
   # To avoid exposing username and password parameters, leave these parameters empty and configure
   # these cluster settings using an External Secrets Manager. Use the following keys in the secret:
   # HZ_CS_AUTH_USERNAME for username and HZ_CS_AUTH_PASSWORD for password.
@@ -568,7 +568,7 @@ stream:
   # Beginning with Pega Platform '23, enabled by default; when disabled, your deployment does not use a"Kafka stream service" configuration.
   enabled: true
   # Provide externalized Kafka service broker urls.
-  bootstrapServer: ""
+  bootstrapServer: "10.244.0.23:9092"
   # Provide Security Protocol used to communicate with kafka brokers. Supported values are: PLAINTEXT, SSL, SASL_PLAINTEXT, SASL_SSL.
   securityProtocol: PLAINTEXT
   # If required, provide trustStore certificate file name
