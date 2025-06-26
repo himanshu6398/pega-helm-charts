@@ -62,14 +62,19 @@ server:
   diagnostics_file_count: "3"
 
 # Apply securityContext to clustering service pods. Example:
-# securityContext:
-#   runAsUser: 1000
-#   fsGroup: 0
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  seccompProfile:
+    type: RuntimeDefault
 
 # Apply securityContext to clustering service containers. Example:
-# containerSecurityContext:
-#   allowPrivilegeEscalation: false
-#   capabilities:
-#     drop:
-#     - ALL
-#   runAsNonRoot: true
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  runAsNonRoot: true
+  runAsUser: 999
+  readOnlyRootFilesystem: true
+  privileged: false

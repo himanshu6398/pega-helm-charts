@@ -29,12 +29,16 @@ spec:
       containers:
       - name: hazelcast
         image: {{ .Values.clusteringServiceImage }}
+        securityContext: # Apply securityContext at the container level
+{{ toYaml .Values.securityContext | indent 10 }}
   {{- if ( .Values.imagePullPolicy ) }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
   {{- end }}
         volumeMounts:
         - name: logs
           mountPath: "/opt/hazelcast/logs"
+        - name: customconfig
+          mountPath: "/opt/hazelcast/customconfig"
         - name: {{ template "hazelcastVolumeCredentials" }}
           mountPath: "/opt/hazelcast/secrets"
       {{- if (eq (include "isEncryptionEnabled" .) "true") }}
@@ -44,10 +48,6 @@ spec:
         envFrom:
         - configMapRef:
             name: {{ template "clusteringServiceEnvironmentConfig" }}
-{{- if .Values.containerSecurityContext }}
-        securityContext:
-{{ toYaml .Values.containerSecurityContext | indent 10 }}
-{{-  end }}
         resources:
           requests:
             cpu: "{{ .Values.resources.requests.cpu }}"
@@ -84,6 +84,8 @@ spec:
       volumes:
       # Volume used to mount logs folder
       - name: logs
+        emptyDir: {}
+      - name: customconfig
         emptyDir: {}
       # Volume used to mount secret files.
       {{- include "hazelcastVolumeTemplate" . | indent 6 }}
