@@ -30,7 +30,7 @@ spec:
       - name: hazelcast
         image: {{ .Values.clusteringServiceImage }}
         securityContext: # Apply securityContext at the container level
-{{ toYaml .Values.securityContext | indent 10 }}
+{{ toYaml .Values.containerSecurityContext | indent 10 }}
   {{- if ( .Values.imagePullPolicy ) }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
   {{- end }}
