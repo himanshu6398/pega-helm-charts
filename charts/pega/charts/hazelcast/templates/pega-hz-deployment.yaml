@@ -22,11 +22,17 @@ spec:
 {{- include "generatedHazelcastServicePodAnnotations" . | indent 8 }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.server.graceful_shutdown_max_wait_seconds }}
+{{- if .Values.securityContext }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+{{- end }}
       containers:
       - name: hazelcast
         image: {{ .Values.image }}
-        securityContext: # Apply securityContext at the container level
-{ { toYaml .Values.containerSecurityContext | indent 10 } }
+{{- if .Values.containerSecurityContext }}
+        securityContext:
+{{ toYaml .Values.containerSecurityContext | indent 10 }}
+{{- end }}
   {{- if ( .Values.imagePullPolicy ) }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
   {{- end }}
