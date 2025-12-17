@@ -1,7 +1,7 @@
 ---
 image: "YOUR_HAZELCAST_IMAGE:TAG"
 clusteringServiceImage: "YOUR_CLUSTERING_SERVICE_IMAGE:TAG"
-imagePullPolicy: "Always"
+imagePullPolicy: "Never"
 # Enter the number of initial members in Hazelcast cluster.
 replicas: 3
 # Setting below to true will deploy the Pega Platform in client-server Hazelcast model for version 8.6 through 8.7.x.
@@ -62,14 +62,19 @@ server:
   diagnostics_file_count: "3"
 
 # Apply securityContext to clustering service pods. Example:
-# securityContext:
-#   runAsUser: 1000
-#   fsGroup: 0
+#securityContext:
+#  runAsNonRoot: true
+#  runAsUser: 999
+#  seccompProfile:
+#    type: RuntimeDefault
 
 # Apply securityContext to clustering service containers. Example:
-# containerSecurityContext:
-#   allowPrivilegeEscalation: false
-#   capabilities:
-#     drop:
-#     - ALL
-#   runAsNonRoot: true
+#containerSecurityContext:
+#  allowPrivilegeEscalation: false
+#  capabilities:
+#    drop:
+#      - ALL
+#  runAsNonRoot: true
+#  runAsUser: 999
+#  readOnlyRootFilesystem: true
+#  privileged: false

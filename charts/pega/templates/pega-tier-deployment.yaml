@@ -14,22 +14,22 @@
 
 {{ $containerWaitList := list  }}
 {{ if (eq (include "performOnlyDeployment" $) "true") }}
-{{ if not $.Values.pegasearch.externalSearchService }}
-{{ $containerWaitList = append $containerWaitList "waitForPegaSearch" }}
+#{{ if not $.Values.pegasearch.externalSearchService }}
+{{ $containerWaitList = list }}
 {{ end }}
-{{ if (eq (include "cassandraEnabled" $) "true" ) }}
-{{ $containerWaitList = append $containerWaitList "waitForCassandra" }}
-{{ end }}
-{{ end }}
+#{{ if (eq (include "cassandraEnabled" $) "true" ) }}
+#{{ $containerWaitList = append $containerWaitList "waitForCassandra" }}
+#{{ end }}
+#{{ end }}
 
 {{ if (eq (include "performInstallAndDeployment" $) "true") }}
 {{ $containerWaitList = append $containerWaitList "waitForPegaDBInstall" }}
-{{ if not $.Values.pegasearch.externalSearchService }}
-{{ $containerWaitList = append $containerWaitList "waitForPegaSearch" }}
-{{ end }}
-{{ if (eq (include "cassandraEnabled" $) "true" ) }}
-{{ $containerWaitList = append $containerWaitList "waitForCassandra" }}
-{{ end }}
+#{{ if not $.Values.pegasearch.externalSearchService }}
+#{{ $containerWaitList = append $containerWaitList "waitForPegaSearch" }}
+#{{ end }}
+#{{ if (eq (include "cassandraEnabled" $) "true" ) }}
+#{{ $containerWaitList = append $containerWaitList "waitForCassandra" }}
+#{{ end }}
 {{ end }}
 
 # Allowing ZDT wait containers to trigger only in case of upgradeType as zero-downtime, so that custom upgrade moves forward in case of failure in ZDT

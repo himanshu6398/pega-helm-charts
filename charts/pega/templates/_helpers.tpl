@@ -197,7 +197,7 @@
   image: {{ .Values.global.utilityImages.busybox.image }}
   imagePullPolicy: {{ .Values.global.utilityImages.busybox.imagePullPolicy }}
   # Init container for waiting for Elastic Search to initialize.  The URL should point at your Elastic Search instance.
-  command: ['sh', '-c', 'until $(wget -q -S --spider --timeout=2 -O /dev/null {{ include "pegaSearchURL" $ }}); do echo Waiting for search to become live...; sleep 10; done;']
+  command: ['sh', '-c', 'if wget -q -S --spider --timeout=2 -O /dev/null {{ include "pegaSearchURL" $ }}; then echo "Pega-search is available."; else echo "Pega-search not found, continue anyway."; fi']
 {{- include "initContainerResources" $ }}
 {{- end }}
 

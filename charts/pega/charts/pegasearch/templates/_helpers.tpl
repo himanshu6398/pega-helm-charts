@@ -27,13 +27,7 @@
        however this check determines if search is deployed externally as defined in the backing search service configuration or if it is defined in the Pega-provided 
        Docker search image.*/ -}}
 {{- define "isExternalSearch" -}}
-  {{- $defaultSearchURL := printf "%s" (include "defaultSearchURL" $) -}}
-  {{- $searchURL := printf "%s" (include "searchURL" $) -}}
-  {{- if or (ne $searchURL $defaultSearchURL) $.Values.externalSearchService -}}
     true
-  {{- else -}}
-    false
-  {{- end -}}
 {{- end -}}
 
 
